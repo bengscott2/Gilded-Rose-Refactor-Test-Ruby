@@ -14,26 +14,18 @@ class GildedRose
     @items.each do |item|
       next if @Age_quality_does_not_change.include?(item.name)
 
-      if item.name == "Backstage passes to a TAFKAL80ETC concert"
-        if item.sell_in < 11
-          below_max?(item)
-        end
-        if item.sell_in < 6
-          below_max?(item)
-        end
-      end
 
-
-      if @Age_quality_increase.include?(item.name)
-        below_max?(item)
+      if backstage_pass?(item)
+        backstage_pass_logic(item)
       else
-        above_min?(item)
+        if @Age_quality_increase.include?(item.name)
+          below_max?(item)
+        else
+          above_min?(item)
+        end
       end
 
-      ##THIS CHECKS IF QUALITY CHANGE SHOULD HAPPEN AGAIN SO X2 IF PASSED SELL IN DATE
-      ## THIS IS QUALITY DECREASE
       item.sell_in = item.sell_in - 1
-      #checks for items that have less than 0 sell_in
       if item.sell_in < 0
         if item.name != "Aged Brie"
           if item.name != "Backstage passes to a TAFKAL80ETC concert"
@@ -46,6 +38,7 @@ class GildedRose
           below_max?(item)
         end
       end
+
     end
   end
 
@@ -60,6 +53,17 @@ class GildedRose
       item.quality = item.quality - 1
     end
   end
+
+  def backstage_pass?(item)
+    item.name == "Backstage passes to a TAFKAL80ETC concert"
+  end
+
+  def backstage_pass_logic(item)
+    below_max?(item) if item.sell_in < 50
+    below_max?(item) if item.sell_in < 11
+    below_max?(item) if item.sell_in < 6
+  end
+
 end
 
 class Item
@@ -75,5 +79,3 @@ class Item
     "#{@name}, #{@sell_in}, #{@quality}"
   end
 end
-
-#
