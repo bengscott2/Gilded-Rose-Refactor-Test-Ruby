@@ -14,19 +14,18 @@ class GildedRose
     @items.each do |item|
       next if @Age_quality_does_not_change.include?(item.name)
 
+      if item.name == "Backstage passes to a TAFKAL80ETC concert"
+        if item.sell_in < 11
+          below_max?(item)
+        end
+        if item.sell_in < 6
+          below_max?(item)
+        end
+      end
+
 
       if @Age_quality_increase.include?(item.name)
-        if item.quality < QUALITY_MAX
-          below_max?(item)
-          if item.name == "Backstage passes to a TAFKAL80ETC concert"
-            if item.sell_in < 11
-              below_max?(item)
-            end
-            if item.sell_in < 6
-              below_max?(item)
-            end
-          end
-        end
+        below_max?(item)
       else
         above_min?(item)
       end
