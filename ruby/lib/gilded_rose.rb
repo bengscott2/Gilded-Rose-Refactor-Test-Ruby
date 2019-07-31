@@ -5,6 +5,7 @@ class GildedRose
     @Age_quality_increase = ["Backstage passes to a TAFKAL80ETC concert", "Aged Brie"]
     @Age_quality_decrease = []
     @Age_quality_does_not_change = ["Sulfuras, Hand of Ragnaros"]
+    QUALITY_MAX = 50
   end
 
   def update_quality()
@@ -13,16 +14,16 @@ class GildedRose
 
 
       if @Age_quality_increase.include?(item.name)
-        if item.quality < 50
+        if below_max?(item.quality)
           item.quality = item.quality + 1
           if item.name == "Backstage passes to a TAFKAL80ETC concert"
             if item.sell_in < 11
-              if item.quality < 50
+              if below_max?(item.quality)
                 item.quality = item.quality + 1
               end
             end
             if item.sell_in < 6
-              if item.quality < 50
+              if below_max?(item.quality)
                 item.quality = item.quality + 1
               end
             end
@@ -49,7 +50,7 @@ class GildedRose
           end
         ## THIS IS QUALITY INCREASE
         else
-          if item.quality < 50
+          if below_max?(item.quality)
             item.quality = item.quality + 1
           end
         end
@@ -57,7 +58,7 @@ class GildedRose
     end
   end
 
-  def at_max?(item)
+  def below_max?(item)
     item.quality < QUALITY_MAX
   end
 end
