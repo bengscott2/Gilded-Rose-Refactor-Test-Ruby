@@ -6,39 +6,23 @@ class GildedRose
   def initialize(items)
     @items = items
     @Age_quality_increase = ["Backstage passes to a TAFKAL80ETC concert", "Aged Brie"]
-    @Age_quality_decrease = []
     @Age_quality_does_not_change = ["Sulfuras, Hand of Ragnaros"]
   end
 
   def update_quality()
     @items.each do |item|
       next if @Age_quality_does_not_change.include?(item.name)
-
-
-      if backstage_pass?(item)
-        backstage_pass_logic(item)
+      if @Age_quality_increase.include?(item.name)
+        if backstage_pass?(item)
+          backstage_pass_logic(item)
+        else
+          below_max?(item)
+        end
       else
-        if @Age_quality_increase.include?(item.name)
-          below_max?(item)
-        else
-          above_min?(item)
-        end
+        above_min?(item)
+        above_min?(item) if item.sell_in < 1
       end
-
-      item.sell_in = item.sell_in - 1
-      if item.sell_in < 0
-        if item.name != "Aged Brie"
-          if item.name != "Backstage passes to a TAFKAL80ETC concert"
-            above_min?(item)
-          else
-            item.quality = item.quality - item.quality
-          end
-        ## THIS IS QUALITY INCREASE
-        else
-          below_max?(item)
-        end
-      end
-
+      item.sell_in -= 1
     end
   end
 
@@ -59,9 +43,13 @@ class GildedRose
   end
 
   def backstage_pass_logic(item)
-    below_max?(item) if item.sell_in < 50
-    below_max?(item) if item.sell_in < 11
-    below_max?(item) if item.sell_in < 6
+    if item.sell_in <= 0
+      item.quality = 0
+    else
+      below_max?(item) if item.sell_in < 50
+      below_max?(item) if item.sell_in < 11
+      below_max?(item) if item.sell_in < 6
+    end
   end
 
 end
