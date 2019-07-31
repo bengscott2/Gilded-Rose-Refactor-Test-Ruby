@@ -1,11 +1,13 @@
 class GildedRose
 
+  QUALITY_MAX = 50
+  QUALITY_MIN = 0
+
   def initialize(items)
     @items = items
     @Age_quality_increase = ["Backstage passes to a TAFKAL80ETC concert", "Aged Brie"]
     @Age_quality_decrease = []
     @Age_quality_does_not_change = ["Sulfuras, Hand of Ragnaros"]
-    QUALITY_MAX = 50
   end
 
   def update_quality()
@@ -14,25 +16,19 @@ class GildedRose
 
 
       if @Age_quality_increase.include?(item.name)
-        if below_max?(item.quality)
-          item.quality = item.quality + 1
+        if item.quality < QUALITY_MAX
+          below_max?(item)
           if item.name == "Backstage passes to a TAFKAL80ETC concert"
             if item.sell_in < 11
-              if below_max?(item.quality)
-                item.quality = item.quality + 1
-              end
+              below_max?(item)
             end
             if item.sell_in < 6
-              if below_max?(item.quality)
-                item.quality = item.quality + 1
-              end
+              below_max?(item)
             end
           end
         end
       else
-        if item.quality > 0
-          item.quality = item.quality - 1
-        end
+        above_min?(item)
       end
 
       ##THIS CHECKS IF QUALITY CHANGE SHOULD HAPPEN AGAIN SO X2 IF PASSED SELL IN DATE
@@ -42,24 +38,28 @@ class GildedRose
       if item.sell_in < 0
         if item.name != "Aged Brie"
           if item.name != "Backstage passes to a TAFKAL80ETC concert"
-            if item.quality > 0
-              item.quality = item.quality - 1
-            end
+            above_min?(item)
           else
             item.quality = item.quality - item.quality
           end
         ## THIS IS QUALITY INCREASE
         else
-          if below_max?(item.quality)
-            item.quality = item.quality + 1
-          end
+          below_max?(item)
         end
       end
     end
   end
 
   def below_max?(item)
-    item.quality < QUALITY_MAX
+    if item.quality < QUALITY_MAX
+      item.quality = item.quality + 1
+    end
+  end
+
+  def above_min?(item)
+    if item.quality > QUALITY_MIN
+      item.quality = item.quality - 1
+    end
   end
 end
 
