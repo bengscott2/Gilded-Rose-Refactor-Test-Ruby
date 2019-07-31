@@ -2,21 +2,17 @@ class GildedRose
 
   def initialize(items)
     @items = items
+    @Age_quality_increase = ["Backstage passes to a TAFKAL80ETC concert", "Aged Brie"]
+    @Age_quality_decrease = []
+    @Age_quality_does_not_change = ["Sulfuras, Hand of Ragnaros"]
   end
 
   def update_quality()
     @items.each do |item|
-      next if item.name == "Sulfuras, Hand of Ragnaros"
+      next if @Age_quality_does_not_change.include?(item.name)
 
-      #This if is checking to see if the item is aged brie or Backstage passes as they have seperate functions
-      if item.name != "Aged Brie" && item.name != "Backstage passes to a TAFKAL80ETC concert"
-        #check to make sure the quality is above 0
-        if item.quality > 0
-          #deduct item quality by 1
-          item.quality = item.quality - 1
-        end
-      else
-        #Check to make sure item quality is less than 50
+
+      if @Age_quality_increase.include?(item.name)
         if item.quality < 50
           item.quality = item.quality + 1
           if item.name == "Backstage passes to a TAFKAL80ETC concert"
@@ -32,8 +28,14 @@ class GildedRose
             end
           end
         end
+      else
+        if item.quality > 0
+          item.quality = item.quality - 1
+        end
       end
 
+      ##THIS CHECKS IF QUALITY CHANGE SHOULD HAPPEN AGAIN SO X2 IF PASSED SELL IN DATE
+      ## THIS IS QUALITY DECREASE
       item.sell_in = item.sell_in - 1
       #checks for items that have less than 0 sell_in
       if item.sell_in < 0
@@ -45,6 +47,7 @@ class GildedRose
           else
             item.quality = item.quality - item.quality
           end
+        ## THIS IS QUALITY INCREASE
         else
           if item.quality < 50
             item.quality = item.quality + 1
@@ -52,6 +55,10 @@ class GildedRose
         end
       end
     end
+  end
+
+  def at_max?(item)
+    item.quality < QUALITY_MAX
   end
 end
 
