@@ -1,6 +1,5 @@
 # frozen_string_literal: true
-
-require 'timecop'
+require 'pry'
 
 require 'simplecov'
 require 'simplecov-console'
