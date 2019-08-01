@@ -12,19 +12,12 @@ class GildedRose
   def update_quality()
     @items.each do |item|
       next if @Age_quality_does_not_change.include?(item.name)
-      if @Age_quality_increase.include?(item.name)
-        if backstage_pass?(item)
-          backstage_pass_logic(item)
-        else
-          below_max?(item)
-        end
-      else
-        above_min?(item)
-        above_min?(item) if item.sell_in < 1
-      end
+      age_quality_decision(item)
       item.sell_in -= 1
     end
   end
+
+  private
 
   def below_max?(item)
     if item.quality < QUALITY_MAX
@@ -49,6 +42,27 @@ class GildedRose
       below_max?(item) if item.sell_in < 50
       below_max?(item) if item.sell_in < 11
       below_max?(item) if item.sell_in < 6
+    end
+  end
+
+  def age_quality_increase(item)
+    if backstage_pass?(item)
+      backstage_pass_logic(item)
+    else
+      below_max?(item)
+    end
+  end
+
+  def age_quality_decrease(item)
+    above_min?(item)
+    above_min?(item) if item.sell_in < 1
+  end
+
+  def age_quality_decision(item)
+    if @Age_quality_increase.include?(item.name)
+      age_quality_increase(item)
+    else
+      age_quality_decrease(item)
     end
   end
 
